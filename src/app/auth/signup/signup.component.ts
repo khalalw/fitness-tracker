@@ -8,6 +8,7 @@ import { NgForm } from '@angular/forms';
       <form
         fxLayout="column"
         fxLayoutAlign="center center"
+        fxLayoutGap="10px"
         #f="ngForm"
         (ngSubmit)="onSubmit(f)"
       >
@@ -45,24 +46,45 @@ import { NgForm } from '@angular/forms';
           </mat-hint>
         </mat-form-field>
         <mat-form-field>
-          <input matInput placeholder="birthdate" [matDatepicker]="picker" />
+          <input
+            matInput
+            placeholder="Birthdate"
+            [matDatepicker]="picker"
+            [max]="maxDate"
+            ngModel
+            name="birthdate"
+            required
+          />
           <mat-datepicker-toggle
             matSuffix
             [for]="picker"
           ></mat-datepicker-toggle>
           <mat-datepicker #picker></mat-datepicker>
         </mat-form-field>
-
-        <button type="submit" mat-raised-button color="primary">Log In</button>
+        <mat-checkbox ngModel name="agree" required>
+          I agree to the Terms and Conditions
+        </mat-checkbox>
+        <button
+          type="submit"
+          mat-raised-button
+          color="accent"
+          [disabled]="f.invalid"
+        >
+          Sign Up
+        </button>
       </form>
     </section>
   `,
   styleUrls: ['./signup.component.scss'],
 })
 export class SignupComponent implements OnInit {
+  maxDate: Date;
   constructor() {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.maxDate = new Date();
+    this.maxDate.setFullYear(this.maxDate.getFullYear() - 16);
+  }
 
   onSubmit(form: NgForm) {
     console.log(form);
