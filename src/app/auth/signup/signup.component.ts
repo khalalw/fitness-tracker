@@ -40,10 +40,19 @@ import { NgForm } from '@angular/forms';
             minlength="8"
             #pw="ngModel"
           />
-          <mat-hint align="end" *ngIf="pw.value?.length < 8"
-            >{{ pw.value?.length }} / 8</mat-hint
-          >
+          <mat-hint align="end" *ngIf="pw.value?.length < 8">
+            {{ pw.value?.length }} / 8
+          </mat-hint>
         </mat-form-field>
+        <mat-form-field>
+          <input matInput placeholder="birthdate" [matDatepicker]="picker" />
+          <mat-datepicker-toggle
+            matSuffix
+            [for]="picker"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+
         <button type="submit" mat-raised-button color="primary">Log In</button>
       </form>
     </section>
