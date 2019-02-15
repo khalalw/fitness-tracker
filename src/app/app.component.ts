@@ -9,13 +9,13 @@ import { Component, ViewChild } from '@angular/core';
       </mat-sidenav>
       <mat-sidenav-content>
         <mat-toolbar color="primary">
-          <div>
+          <div fxHide.gt-xs>
             <button mat-icon-button (click)="sidenav.toggle()">
               <mat-icon>menu</mat-icon>
             </button>
           </div>
           <div><a routerLink="/"> LOGO</a></div>
-          <div fxFlex fxLayout fxLayoutAlign="flex-end" fx>
+          <div fxFlex fxLayout fxLayoutAlign="flex-end" fxHide.xs>
             <ul fxLayout fxLayoutGap="10px" class="navigation-items">
               <li><a routerLink="/signup">Sign Up</a></li>
               <li><a routerLink="/login">Log In</a></li>
