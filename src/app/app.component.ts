@@ -5,7 +5,26 @@ import { Component, ViewChild } from '@angular/core';
   template: `
     <mat-sidenav-container>
       <mat-sidenav #sidenav role="navigation">
-        <p>I'm the sidenav</p>
+        <mat-nav-list (click)="sidenav.close()">
+          <a mat-list-item routerLink="/signup">
+            <mat-icon>account_circle</mat-icon>
+            <span class="nav-caption">Sign Up</span>
+          </a>
+          <a mat-list-item routerLink="/login">
+            <mat-icon>input</mat-icon>
+            <span class="nav-caption">Log In</span>
+          </a>
+          <a mat-list-item routerLink="/training">
+            <mat-icon>rowing</mat-icon>
+            <span class="nav-caption">Training</span>
+          </a>
+          <mat-list-item>
+            <button mat-icon-button>
+              <mat-icon>eject</mat-icon>
+              <span class="nav-caption">Log Out</span>
+            </button>
+          </mat-list-item>
+        </mat-nav-list>
       </mat-sidenav>
       <mat-sidenav-content>
         <mat-toolbar color="primary">
@@ -20,6 +39,7 @@ import { Component, ViewChild } from '@angular/core';
               <li><a routerLink="/signup">Sign Up</a></li>
               <li><a routerLink="/login">Log In</a></li>
               <li><a routerLink="/training">Training</a></li>
+              <li><a>Log Out</a></li>
             </ul>
           </div>
         </mat-toolbar>
