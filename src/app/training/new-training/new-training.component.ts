@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output } from '@angular/core';
 
 @Component({
   selector: 'app-new-training',
@@ -19,7 +19,9 @@ import { Component, OnInit } from '@angular/core';
           </mat-form-field>
         </mat-card-content>
         <mat-card-actions fxLayoutAlign="center">
-          <button type="submit" mat-button>Start</button>
+          <button type="submit" mat-button (click)="onStartTraining()">
+            Start
+          </button>
         </mat-card-actions>
       </mat-card>
     </section>
@@ -27,7 +29,12 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./new-training.component.scss'],
 })
 export class NewTrainingComponent implements OnInit {
+  @Output() trainingStart = new EventEmitter<void>();
   constructor() {}
 
   ngOnInit() {}
+
+  onStartTraining() {
+    this.trainingStart.emit();
+  }
 }
