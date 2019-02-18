@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 @Component({
   selector: 'app-new-training',
   template: `
-    <p>new training works</p>
+    <p>training works</p>
   `,
   styleUrls: ['./new-training.component.scss'],
 })
