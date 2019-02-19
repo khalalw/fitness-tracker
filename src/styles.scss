@@ -1,4 +1,13 @@
-@import "@angular/material/prebuilt-themes/indigo-pink.css";
+// @import "@angular/material/prebuilt-themes/indigo-pink.css";
+@import "~@angular/material/_theming.scss";
+@include mat-core();
+
+$my-app-primary: mat-palette($mat-blue-grey);
+$my-app-accent: mat-palette($mat-amber, A200, A100, A400);
+$my-app-warn: mat-palette($mat-deep-orange);
+$my-app-theme: mat-light-theme($my-app-primary, $my-app-accent, $my-app-warn);
+
+
 
 html,
 body {
@@ -9,3 +18,5 @@ body {
 body {
   margin: 0;
 }
+
+@include angular-material-theme($my-app-theme);

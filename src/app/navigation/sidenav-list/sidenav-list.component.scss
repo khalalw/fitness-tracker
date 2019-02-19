@@ -1,14 +1,25 @@
 .nav-caption {
   display: inline-block;
   padding-left: 7px;
+
+  &:hover,
+  &:active {
+    color: lightgray
+  }
 }
 
 a {
   text-decoration: none;
   color: white;
 
-  &:hover,
-  &:active {
-    color: lightgray
-  }
+  // &:hover,
+  // &:active {
+  //   color: lightgray
+  // }
+}
+
+button {
+  padding-left: 0;
+  padding-right: 0;
+
 }

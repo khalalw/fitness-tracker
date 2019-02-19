@@ -17,7 +17,7 @@ import { Component, OnInit } from '@angular/core';
         <span class="nav-caption">Training</span>
       </a>
       <mat-list-item>
-        <button mat-icon-button>
+        <button mat-button>
           <mat-icon>eject</mat-icon>
           <span class="nav-caption">Log Out</span>
         </button>

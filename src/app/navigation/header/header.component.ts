@@ -9,7 +9,9 @@ import { Component, OnInit, EventEmitter, Output } from '@angular/core';
           <mat-icon>menu</mat-icon>
         </button>
       </div>
-      <div><a routerLink="/"> LOGO</a></div>
+      <div>
+        <a routerLink="/">Motiv8</a>
+      </div>
       <div fxFlex fxLayout fxLayoutAlign="flex-end" fxHide.xs>
         <ul fxLayout fxLayoutGap="10px" class="navigation-items">
           <li><a routerLink="/signup">Sign Up</a></li>
