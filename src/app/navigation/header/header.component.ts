@@ -25,7 +25,7 @@ import { Subscription } from 'rxjs/Subscription';
           <li *ngIf="!isAuth"><a routerLink="/signup">Sign Up</a></li>
           <li *ngIf="!isAuth"><a routerLink="/login">Log In</a></li>
           <li *ngIf="isAuth"><a routerLink="/training">Training</a></li>
-          <li *ngIf="isAuth"><a>Log Out</a></li>
+          <li *ngIf="isAuth"><a (click)="onLogout()">Log Out</a></li>
         </ul>
       </div>
     </mat-toolbar>
@@ -46,6 +46,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.authSubcription.unsubscribe();
+  }
+
+  onLogout() {
+    this.authService.logout();
   }
 
   onToggleSidenav() {
