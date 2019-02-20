@@ -1,4 +1,12 @@
-import { Component, OnInit, EventEmitter, Output } from '@angular/core';
+import { AuthService } from './../../auth/auth.service';
+import {
+  Component,
+  OnInit,
+  EventEmitter,
+  Output,
+  OnDestroy,
+} from '@angular/core';
+import { Subscription } from 'rxjs/Subscription';
 
 @Component({
   selector: 'app-header',
@@ -14,21 +22,31 @@ import { Component, OnInit, EventEmitter, Output } from '@angular/core';
       </div>
       <div fxFlex fxLayout fxLayoutAlign="flex-end" fxHide.xs>
         <ul fxLayout fxLayoutGap="10px" class="navigation-items">
-          <li><a routerLink="/signup">Sign Up</a></li>
-          <li><a routerLink="/login">Log In</a></li>
-          <li><a routerLink="/training">Training</a></li>
-          <li><a>Log Out</a></li>
+          <li *ngIf="!isAuth"><a routerLink="/signup">Sign Up</a></li>
+          <li *ngIf="!isAuth"><a routerLink="/login">Log In</a></li>
+          <li *ngIf="isAuth"><a routerLink="/training">Training</a></li>
+          <li *ngIf="isAuth"><a>Log Out</a></li>
         </ul>
       </div>
     </mat-toolbar>
   `,
   styleUrls: ['./header.component.scss'],
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent implements OnInit, OnDestroy {
   @Output() sidenavToggle = new EventEmitter<void>();
-  constructor() {}
+  isAuth: boolean;
+  authSubcription: Subscription;
+  constructor(private authService: AuthService) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.authSubcription = this.authService.authChange.subscribe(authStatus => {
+      this.isAuth = authStatus;
+    });
+  }
+
+  ngOnDestroy() {
+    this.authSubcription.unsubscribe();
+  }
 
   onToggleSidenav() {
     this.sidenavToggle.emit();
