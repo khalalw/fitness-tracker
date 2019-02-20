@@ -1,4 +1,6 @@
+import { TrainingService } from './../training.service';
 import { Component, OnInit, EventEmitter, Output } from '@angular/core';
+import { Exercise } from '../exercise.model';
 
 @Component({
   selector: 'app-new-training',
@@ -9,12 +11,11 @@ import { Component, OnInit, EventEmitter, Output } from '@angular/core';
         <mat-card-content fxLayoutAlign="center">
           <mat-form-field>
             <mat-select placeholder="Select an Exercise...">
-              <mat-option value="crunches">Crunches</mat-option>
-              <mat-option value="burpees">Burpees</mat-option>
-              <mat-option value="planks">Planks</mat-option>
-              <mat-option value="pullups">Pull Ups</mat-option>
-              <mat-option value="pushups">Push Ups</mat-option>
-              <mat-option value="legraises">Leg Raises</mat-option>
+              <mat-option
+                *ngFor="let exercise of exercises"
+                [value]="exercise.id"
+                >{{ exercise.name }}</mat-option
+              >
             </mat-select>
           </mat-form-field>
         </mat-card-content>
@@ -30,9 +31,13 @@ import { Component, OnInit, EventEmitter, Output } from '@angular/core';
 })
 export class NewTrainingComponent implements OnInit {
   @Output() trainingStart = new EventEmitter<void>();
-  constructor() {}
+  exercises: Exercise[];
 
-  ngOnInit() {}
+  constructor(private trainingService: TrainingService) {}
+
+  ngOnInit() {
+    this.exercises = this.trainingService.getExercises();
+  }
 
   onStartTraining() {
     this.trainingStart.emit();
