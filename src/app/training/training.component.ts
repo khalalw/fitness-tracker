@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs/Subscription';
+import { TrainingService } from './training.service';
 
 @Component({
   selector: 'app-training',
   template: `
     <mat-tab-group *ngIf="!isTrainingOngoing">
       <mat-tab label="New Exercise">
-        <app-new-training
-          (trainingStart)="isTrainingOngoing = true"
-        ></app-new-training>
+        <app-new-training></app-new-training>
       </mat-tab>
       <mat-tab label="Past Exercises">
         <app-past-training></app-past-training>
@@ -22,7 +22,17 @@ import { Component, OnInit } from '@angular/core';
 })
 export class TrainingComponent implements OnInit {
   isTrainingOngoing = false;
-  constructor() {}
+  exerciseSubscription: Subscription;
 
-  ngOnInit() {}
+  constructor(private trainingService: TrainingService) {}
+
+  ngOnInit() {
+    this.exerciseSubscription = this.trainingService.exerciseChanged.subscribe(
+      exercise => {
+        exercise
+          ? (this.isTrainingOngoing = true)
+          : (this.isTrainingOngoing = false);
+      }
+    );
+  }
 }
