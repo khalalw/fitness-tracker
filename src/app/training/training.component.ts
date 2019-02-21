@@ -13,10 +13,7 @@ import { TrainingService } from './training.service';
         <app-past-training></app-past-training>
       </mat-tab>
     </mat-tab-group>
-    <app-current-training
-      *ngIf="isTrainingOngoing"
-      (trainingExit)="isTrainingOngoing = false"
-    ></app-current-training>
+    <app-current-training *ngIf="isTrainingOngoing"></app-current-training>
   `,
   styleUrls: ['./training.component.scss'],
 })
