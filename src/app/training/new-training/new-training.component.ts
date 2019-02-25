@@ -2,6 +2,7 @@ import { NgForm } from '@angular/forms';
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { AngularFirestore } from '@angular/fire/firestore';
+import { map } from 'rxjs/operators';
 
 import { Exercise } from '../exercise.model';
 import { TrainingService } from './../training.service';
@@ -25,7 +26,7 @@ import { TrainingService } from './../training.service';
               >
                 <mat-option
                   *ngFor="let exercise of (exercises | async)"
-                  [value]="exercise.name"
+                  [value]="exercise.id"
                 >
                   {{ exercise.name }}
                 </mat-option>
@@ -49,7 +50,7 @@ import { TrainingService } from './../training.service';
   styleUrls: ['./new-training.component.scss'],
 })
 export class NewTrainingComponent implements OnInit {
-  exercises: Observable<any>;
+  exercises: Observable<Exercise[]>;
 
   constructor(
     private trainingService: TrainingService,
@@ -57,7 +58,22 @@ export class NewTrainingComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.exercises = this.db.collection('availableExercises').valueChanges();
+    this.exercises = this.db
+      .collection('availableExercises')
+      .snapshotChanges()
+      .pipe(
+        map(docData => {
+          return docData.map(doc => {
+            const d: any = doc.payload.doc;
+            return {
+              id: d.id,
+              name: d.data().name,
+              duration: d.data().duration,
+              calories: d.data().calories,
+            };
+          });
+        })
+      );
   }
 
   onStartTraining(form: NgForm) {
