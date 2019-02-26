@@ -37,10 +37,32 @@ export class TrainingService {
             });
           })
         )
+        .subscribe(
+          (exercises: Exercise[]) => {
+            this.uiService.loadingStateChanged.next(false);
+            this.availableExercises = exercises;
+            this.exercisesChanged.next([...this.availableExercises]);
+          },
+          err => {
+            this.uiService.loadingStateChanged.next(false);
+            this.uiService.openSnackBar(
+              'Fetching exercises failed, please try again later',
+              null,
+              3000
+            );
+            this.exerciseChanged.next(null);
+          }
+        )
+    );
+  }
+
+  fetchPastExercises() {
+    this.fbSubs.push(
+      this.db
+        .collection('pastExercises')
+        .valueChanges()
         .subscribe((exercises: Exercise[]) => {
-          this.uiService.loadingStateChanged.next(false);
-          this.availableExercises = exercises;
-          this.exercisesChanged.next([...this.availableExercises]);
+          this.pastExercisesChanged.next(exercises);
         })
     );
   }
@@ -77,17 +99,6 @@ export class TrainingService {
 
   getRunningExercise() {
     return { ...this.runningExercise };
-  }
-
-  fetchPastExercises() {
-    this.fbSubs.push(
-      this.db
-        .collection('pastExercises')
-        .valueChanges()
-        .subscribe((exercises: Exercise[]) => {
-          this.pastExercisesChanged.next(exercises);
-        })
-    );
   }
 
   cancelSubs() {

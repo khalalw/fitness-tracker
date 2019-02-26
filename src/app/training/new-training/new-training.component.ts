@@ -17,7 +17,7 @@ import { UIService } from 'src/app/shared/ui.service';
           </mat-card-title>
 
           <mat-card-content fxLayoutAlign="center">
-            <mat-form-field *ngIf="!isLoading">
+            <mat-form-field *ngIf="!isLoading && exercises">
               <mat-select
                 placeholder="Select an Exercise..."
                 ngModel
@@ -39,9 +39,19 @@ import { UIService } from 'src/app/shared/ui.service';
               type="submit"
               mat-button
               [disabled]="f.invalid"
-              color="warn"
+              color="primary"
+              *ngIf="exercises"
             >
               Start
+            </button>
+            <button
+              mat-button
+              *ngIf="!exercises"
+              type="button"
+              (click)="fetchExercises()"
+              color="warn"
+            >
+              Fetch again
             </button>
           </mat-card-actions>
         </mat-card>
@@ -73,6 +83,11 @@ export class NewTrainingComponent implements OnInit, OnDestroy {
         this.exercises = exercises;
       }
     );
+
+    this.fetchExercises();
+  }
+
+  fetchExercises() {
     this.trainingService.fetchAvailableExercises();
   }
 
