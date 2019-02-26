@@ -21,7 +21,6 @@ import { WelcomeComponent } from './welcome/welcome.component';
 import { HeaderComponent } from './navigation/header/header.component';
 import { SidenavListComponent } from './navigation/sidenav-list/sidenav-list.component';
 
-import { TrainingModule } from './training/training.module';
 import { TrainingService } from './training/training.service';
 @NgModule({
   declarations: [
@@ -39,7 +38,6 @@ import { TrainingService } from './training/training.service';
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule,
     AuthModule,
-    TrainingModule,
   ],
   providers: [
     AuthService,
