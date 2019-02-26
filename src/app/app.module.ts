@@ -1,3 +1,4 @@
+import { UIService } from './shared/ui.service';
 import { AuthService } from './auth/auth.service';
 import { AppRoutingMOdule } from './app-routing.module';
 import { NgModule } from '@angular/core';
@@ -50,7 +51,7 @@ import { AngularFireAuthModule } from '@angular/fire/auth';
     AngularFirestoreModule,
     AngularFireAuthModule,
   ],
-  providers: [AuthService, TrainingService],
+  providers: [AuthService, TrainingService, UIService],
   bootstrap: [AppComponent],
   entryComponents: [StopTrainingComponent],
 })
