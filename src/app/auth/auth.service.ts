@@ -45,7 +45,7 @@ export class AuthService {
         this.uiService.loadingStateChanged.next(true);
       })
       .catch(err => {
-        this.openSnackBar(err.message, null);
+        this.uiService.openSnackBar(err.message, null, 3000);
         this.uiService.loadingStateChanged.next(true);
       });
   }
@@ -59,18 +59,12 @@ export class AuthService {
       })
       .catch(err => {
         this.uiService.loadingStateChanged.next(false);
-        this.openSnackBar(err.message, null);
+        this.uiService.openSnackBar(err.message, null, 3000);
       });
   }
 
   isAuthenticated() {
     return this.isAuth;
-  }
-
-  openSnackBar(message: string, action: string) {
-    this.snackBar.open(message, action, {
-      duration: 5000,
-    });
   }
 
   logout() {
