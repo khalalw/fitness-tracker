@@ -57,7 +57,7 @@ export class NewTrainingComponent implements OnInit {
     this.exerciseSubscription = this.trainingService.exercisesChanged.subscribe(
       exercises => (this.exercises = exercises)
     );
-    this.trainingService.fetchExercises();
+    this.trainingService.fetchAvailableExercises();
   }
 
   onStartTraining(form: NgForm) {

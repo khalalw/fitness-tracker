@@ -1,3 +1,5 @@
+import { TrainingService } from './../training/training.service';
+
 import { AuthData } from './auth-data.model';
 import { User } from './user.model';
 import { Subject } from 'rxjs';
@@ -11,7 +13,11 @@ export class AuthService {
   authChange = new Subject<boolean>();
   private isAuth = false;
 
-  constructor(private router: Router, private afAuth: AngularFireAuth) {}
+  constructor(
+    private router: Router,
+    private afAuth: AngularFireAuth,
+    private trainingService: TrainingService
+  ) {}
 
   registerUser(authData: AuthData) {
     this.afAuth.auth
@@ -42,9 +48,11 @@ export class AuthService {
   }
 
   logout() {
+    this.afAuth.auth.signOut();
     this.isAuth = false;
     this.authChange.next(false);
     this.router.navigate(['/login']);
+    this.trainingService.cancelSubs();
   }
 
   private authSuccess() {
