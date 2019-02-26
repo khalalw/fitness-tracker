@@ -4,6 +4,7 @@ import { Subscription } from 'rxjs';
 
 import { Exercise } from '../exercise.model';
 import { TrainingService } from './../training.service';
+import { UIService } from 'src/app/shared/ui.service';
 
 @Component({
   selector: 'app-new-training',
@@ -14,8 +15,9 @@ import { TrainingService } from './../training.service';
           <mat-card-title fxLayoutAlign="center">
             Start a Workout
           </mat-card-title>
+
           <mat-card-content fxLayoutAlign="center">
-            <mat-form-field>
+            <mat-form-field *ngIf="!isLoading">
               <mat-select
                 placeholder="Select an Exercise..."
                 ngModel
@@ -30,8 +32,9 @@ import { TrainingService } from './../training.service';
                 </mat-option>
               </mat-select>
             </mat-form-field>
+            <mat-spinner *ngIf="isLoading"></mat-spinner>
           </mat-card-content>
-          <mat-card-actions fxLayoutAlign="center">
+          <mat-card-actions fxLayoutAlign="center" *ngIf="!isLoading">
             <button
               type="submit"
               mat-button
@@ -47,15 +50,28 @@ import { TrainingService } from './../training.service';
   `,
   styleUrls: ['./new-training.component.scss'],
 })
-export class NewTrainingComponent implements OnInit {
+export class NewTrainingComponent implements OnInit, OnDestroy {
   exercises: Exercise[];
-  exerciseSubscription: Subscription;
+  private exerciseSubscription: Subscription;
+  private loadingSubscription: Subscription;
 
-  constructor(private trainingService: TrainingService) {}
+  isLoading = false;
+
+  constructor(
+    private trainingService: TrainingService,
+    private uiService: UIService
+  ) {}
 
   ngOnInit() {
+    this.loadingSubscription = this.uiService.loadingStateChanged.subscribe(
+      isLoading => {
+        this.isLoading = isLoading;
+      }
+    );
     this.exerciseSubscription = this.trainingService.exercisesChanged.subscribe(
-      exercises => (this.exercises = exercises)
+      exercises => {
+        this.exercises = exercises;
+      }
     );
     this.trainingService.fetchAvailableExercises();
   }
@@ -66,5 +82,6 @@ export class NewTrainingComponent implements OnInit {
 
   ngOnDestroy() {
     this.exerciseSubscription.unsubscribe();
+    this.loadingSubscription.unsubscribe();
   }
 }
