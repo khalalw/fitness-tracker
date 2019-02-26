@@ -1,6 +1,8 @@
 import { AuthService } from './../auth.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { NgForm } from '@angular/forms';
+import { UIService } from 'src/app/shared/ui.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-signup',
@@ -70,19 +72,28 @@ import { NgForm } from '@angular/forms';
           mat-raised-button
           color="accent"
           [disabled]="f.invalid"
+          *ngIf="!isLoading"
         >
           Sign Up
         </button>
+        <mat-spinner *ngIf="isLoading"></mat-spinner>
       </form>
     </section>
   `,
   styleUrls: ['./signup.component.scss'],
 })
-export class SignupComponent implements OnInit {
+export class SignupComponent implements OnInit, OnDestroy {
   maxDate: Date;
-  constructor(private authService: AuthService) {}
+  isLoading = false;
+  private loadingSubs: Subscription;
+  constructor(private authService: AuthService, private uiService: UIService) {}
 
   ngOnInit() {
+    this.loadingSubs = this.uiService.loadingStateChanged.subscribe(
+      isLoading => {
+        this.isLoading = isLoading;
+      }
+    );
     this.maxDate = new Date();
     this.maxDate.setFullYear(this.maxDate.getFullYear() - 16);
   }
@@ -92,5 +103,9 @@ export class SignupComponent implements OnInit {
       email: form.value.email,
       password: form.value.password,
     });
+  }
+
+  ngOnDestroy() {
+    this.loadingSubs.unsubscribe();
   }
 }
