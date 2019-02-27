@@ -1,3 +1,4 @@
+import { StoreModule } from '@ngrx/store';
 import { AuthModule } from './auth/auth.module';
 import { UIService } from './shared/ui.service';
 import { AuthService } from './auth/auth.service';
@@ -22,6 +23,8 @@ import { HeaderComponent } from './navigation/header/header.component';
 import { SidenavListComponent } from './navigation/sidenav-list/sidenav-list.component';
 
 import { TrainingService } from './training/training.service';
+import { appReducer } from './app.reducer';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -38,6 +41,7 @@ import { TrainingService } from './training/training.service';
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule,
     AuthModule,
+    StoreModule.forRoot({ ui: appReducer }),
   ],
   providers: [
     AuthService,
