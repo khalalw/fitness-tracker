@@ -8,6 +8,7 @@ import {
   Router,
   Route,
 } from '@angular/router';
+import * as Auth from './auth.reducer';
 
 @Injectable()
 export class AuthGuard implements CanActivate, CanLoad {
