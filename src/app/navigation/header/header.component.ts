@@ -1,12 +1,8 @@
 import { AuthService } from './../../auth/auth.service';
-import {
-  Component,
-  OnInit,
-  EventEmitter,
-  Output,
-  OnDestroy,
-} from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Component, OnInit, EventEmitter, Output } from '@angular/core';
+import { Observable } from 'rxjs';
+import { Store } from '@ngrx/store';
+import * as fromRoot from '../../app.reducer';
 
 @Component({
   selector: 'app-header',
@@ -22,32 +18,30 @@ import { Subscription } from 'rxjs';
       </div>
       <div fxFlex fxLayout fxLayoutAlign="flex-end" fxHide.xs>
         <ul fxLayout fxLayoutGap="10px" class="navigation-items">
-          <li *ngIf="!isAuth"><a routerLink="/signup">Sign Up</a></li>
-          <li *ngIf="!isAuth"><a routerLink="/login">Log In</a></li>
-          <li *ngIf="isAuth"><a routerLink="/training">Training</a></li>
-          <li *ngIf="isAuth"><a (click)="onLogout()">Log Out</a></li>
+          <li *ngIf="!(isAuth$ | async)">
+            <a routerLink="/signup">Sign Up</a>
+          </li>
+          <li *ngIf="!(isAuth$ | async)"><a routerLink="/login">Log In</a></li>
+          <li *ngIf="(isAuth$ | async)">
+            <a routerLink="/training">Training</a>
+          </li>
+          <li *ngIf="(isAuth$ | async)"><a (click)="onLogout()">Log Out</a></li>
         </ul>
       </div>
     </mat-toolbar>
   `,
   styleUrls: ['./header.component.scss'],
 })
-export class HeaderComponent implements OnInit, OnDestroy {
+export class HeaderComponent implements OnInit {
   @Output() sidenavToggle = new EventEmitter<void>();
-  isAuth: boolean;
-  authSubcription: Subscription;
-  constructor(private authService: AuthService) {}
+  isAuth$: Observable<boolean>;
+  constructor(
+    private authService: AuthService,
+    private store: Store<fromRoot.State>
+  ) {}
 
   ngOnInit() {
-    this.authSubcription = this.authService.authChange.subscribe(authStatus => {
-      this.isAuth = authStatus;
-    });
-  }
-
-  ngOnDestroy() {
-    if (this.authSubcription) {
-      this.authSubcription.unsubscribe();
-    }
+    this.isAuth$ = this.store.select(fromRoot.getIsAuth);
   }
 
   onLogout() {
