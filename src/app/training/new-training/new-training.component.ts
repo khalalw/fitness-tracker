@@ -1,10 +1,12 @@
+import { Store } from '@ngrx/store';
 import { NgForm } from '@angular/forms';
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Subscription, Observable } from 'rxjs';
 
 import { Exercise } from '../exercise.model';
 import { TrainingService } from './../training.service';
 import { UIService } from 'src/app/shared/ui.service';
+import * as fromRoot from '../../app.reducer';
 
 @Component({
   selector: 'app-new-training',
@@ -17,7 +19,7 @@ import { UIService } from 'src/app/shared/ui.service';
           </mat-card-title>
 
           <mat-card-content fxLayoutAlign="center">
-            <mat-form-field *ngIf="!isLoading && exercises">
+            <mat-form-field *ngIf="!(isLoading$ | async) && exercises">
               <mat-select
                 placeholder="Select an Exercise..."
                 ngModel
@@ -32,9 +34,12 @@ import { UIService } from 'src/app/shared/ui.service';
                 </mat-option>
               </mat-select>
             </mat-form-field>
-            <mat-spinner *ngIf="isLoading"></mat-spinner>
+            <mat-spinner *ngIf="(isLoading$ | async)"></mat-spinner>
           </mat-card-content>
-          <mat-card-actions fxLayoutAlign="center" *ngIf="!isLoading">
+          <mat-card-actions
+            fxLayoutAlign="center"
+            *ngIf="!(isLoading$ | async)"
+          >
             <button
               type="submit"
               mat-button
@@ -65,19 +70,16 @@ export class NewTrainingComponent implements OnInit, OnDestroy {
   private exerciseSubscription: Subscription;
   private loadingSubscription: Subscription;
 
-  isLoading = false;
+  isLoading$: Observable<boolean>;
 
   constructor(
     private trainingService: TrainingService,
-    private uiService: UIService
+    private uiService: UIService,
+    private store: Store<fromRoot.State>
   ) {}
 
   ngOnInit() {
-    this.loadingSubscription = this.uiService.loadingStateChanged.subscribe(
-      isLoading => {
-        this.isLoading = isLoading;
-      }
-    );
+    this.isLoading$ = this.store.select(fromRoot.getIsLoading);
     this.exerciseSubscription = this.trainingService.exercisesChanged.subscribe(
       exercises => {
         this.exercises = exercises;
@@ -98,9 +100,6 @@ export class NewTrainingComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     if (this.exerciseSubscription) {
       this.exerciseSubscription.unsubscribe();
-    }
-    if (this.loadingSubscription) {
-      this.loadingSubscription.unsubscribe();
     }
   }
 }

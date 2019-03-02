@@ -45,12 +45,11 @@ export class AuthService {
     this.afAuth.auth
       .createUserWithEmailAndPassword(authData.email, authData.password)
       .then(res => {
-        this.uiService.loadingStateChanged.next(true);
+        this.store.dispatch(new UI.StartLoading());
       })
       .catch(err => {
         this.uiService.openSnackBar(err.message, null, 3000);
-        // this.uiService.loadingStateChanged.next(true);
-        this.store.dispatch(new UI.StartLoading());
+        this.store.dispatch(new UI.StopLoading());
       });
   }
 

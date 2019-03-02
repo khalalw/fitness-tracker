@@ -1,8 +1,9 @@
 import { AuthService } from './../auth.service';
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { UIService } from 'src/app/shared/ui.service';
-import { Subscription } from 'rxjs';
+import { Observable } from 'rxjs';
+import * as fromRoot from '../../app.reducer';
+import { Store } from '@ngrx/store';
 
 @Component({
   selector: 'app-signup',
@@ -72,28 +73,27 @@ import { Subscription } from 'rxjs';
           mat-raised-button
           color="accent"
           [disabled]="f.invalid"
-          *ngIf="!isLoading"
+          *ngIf="!(isLoading$ | async)"
         >
           Sign Up
         </button>
-        <mat-spinner *ngIf="isLoading"></mat-spinner>
+        <mat-spinner *ngIf="(isLoading$ | async)"></mat-spinner>
       </form>
     </section>
   `,
   styleUrls: ['./signup.component.scss'],
 })
-export class SignupComponent implements OnInit, OnDestroy {
+export class SignupComponent implements OnInit {
   maxDate: Date;
-  isLoading = false;
-  private loadingSubs: Subscription;
-  constructor(private authService: AuthService, private uiService: UIService) {}
+  isLoading$: Observable<boolean>;
+
+  constructor(
+    private authService: AuthService,
+    private store: Store<fromRoot.State>
+  ) {}
 
   ngOnInit() {
-    this.loadingSubs = this.uiService.loadingStateChanged.subscribe(
-      isLoading => {
-        this.isLoading = isLoading;
-      }
-    );
+    this.isLoading$ = this.store.select(fromRoot.getIsLoading);
     this.maxDate = new Date();
     this.maxDate.setFullYear(this.maxDate.getFullYear() - 16);
   }
@@ -103,11 +103,5 @@ export class SignupComponent implements OnInit, OnDestroy {
       email: form.value.email,
       password: form.value.password,
     });
-  }
-
-  ngOnDestroy() {
-    if (this.loadingSubs) {
-      this.loadingSubs.unsubscribe();
-    }
   }
 }
