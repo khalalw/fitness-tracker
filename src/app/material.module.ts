@@ -20,6 +20,7 @@ import {
   MatPaginatorModule,
   MatSnackBarModule,
 } from '@angular/material';
+import { StopTrainingComponent } from './training/current-training/stop-training.component';
 
 @NgModule({
   imports: [
@@ -64,5 +65,6 @@ import {
     MatPaginatorModule,
     MatSnackBarModule,
   ],
+  entryComponents: [],
 })
 export class MaterialModule {}

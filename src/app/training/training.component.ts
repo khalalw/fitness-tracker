@@ -1,11 +1,13 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Subscription, Observable } from 'rxjs';
 import { TrainingService } from './training.service';
+import { Store } from '@ngrx/store';
+import * as fromTraining from './training.reducer';
 
 @Component({
   selector: 'app-training',
   template: `
-    <mat-tab-group *ngIf="!isTrainingOngoing">
+    <mat-tab-group *ngIf="!(isTrainingOngoing$ | async)">
       <mat-tab label="New Exercise">
         <app-new-training></app-new-training>
       </mat-tab>
@@ -13,29 +15,23 @@ import { TrainingService } from './training.service';
         <app-past-training></app-past-training>
       </mat-tab>
     </mat-tab-group>
-    <app-current-training *ngIf="isTrainingOngoing"></app-current-training>
+    <app-current-training
+      *ngIf="(isTrainingOngoing$ | async)"
+    ></app-current-training>
   `,
   styleUrls: ['./training.component.scss'],
 })
-export class TrainingComponent implements OnInit, OnDestroy {
-  isTrainingOngoing = false;
-  exerciseSubscription: Subscription;
+export class TrainingComponent implements OnInit {
+  isTrainingOngoing$: Observable<boolean>;
 
-  constructor(private trainingService: TrainingService) {}
+  constructor(
+    private trainingService: TrainingService,
+    private store: Store<fromTraining.State>
+  ) {}
 
   ngOnInit() {
-    this.exerciseSubscription = this.trainingService.exerciseChanged.subscribe(
-      exercise => {
-        exercise
-          ? (this.isTrainingOngoing = true)
-          : (this.isTrainingOngoing = false);
-      }
+    this.isTrainingOngoing$ = this.store.select(
+      fromTraining.getIsTrainingOngoing
     );
-  }
-
-  ngOnDestroy() {
-    if (this.exerciseSubscription) {
-      this.exerciseSubscription.unsubscribe();
-    }
   }
 }

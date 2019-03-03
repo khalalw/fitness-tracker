@@ -24,6 +24,7 @@ import { SidenavListComponent } from './navigation/sidenav-list/sidenav-list.com
 
 import { TrainingService } from './training/training.service';
 import { reducers } from './app.reducer';
+import { StopTrainingComponent } from './training/current-training/stop-training.component';
 
 @NgModule({
   declarations: [
@@ -50,5 +51,6 @@ import { reducers } from './app.reducer';
     { provide: FirestoreSettingsToken, useValue: {} },
   ],
   bootstrap: [AppComponent],
+  entryComponents: [],
 })
 export class AppModule {}

@@ -3,7 +3,7 @@ import { Subject, Subscription } from 'rxjs';
 import { Exercise } from './exercise.model';
 import { Injectable } from '@angular/core';
 
-import { map } from 'rxjs/operators';
+import { map, take } from 'rxjs/operators';
 import { UIService } from '../shared/ui.service';
 import * as UI from '../shared/ui.actions';
 import * as fromTraining from './training.reducer';
@@ -79,28 +79,34 @@ export class TrainingService {
   }
 
   completeExercise() {
-    this.addDataToDB({
-      ...this.runningExercise,
-      duration: this.runningExercise.duration / 1000,
-      date: new Date(),
-      state: 'completed',
-    });
-    this.store.dispatch(new Training.StopTraining());
+    this.store
+      .select(fromTraining.getActiveTraining)
+      .pipe(take(1))
+      .subscribe(ex => {
+        this.addDataToDB({
+          ...ex,
+          duration: ex.duration / 1000,
+          date: new Date(),
+          state: 'completed',
+        });
+        this.store.dispatch(new Training.StopTraining());
+      });
   }
 
   cancelExercise(progress: number) {
-    this.addDataToDB({
-      ...this.runningExercise,
-      duration: this.runningExercise.duration * (progress / 100000),
-      calories: this.runningExercise.calories * (progress / 100),
-      date: new Date(),
-      state: 'canceled',
-    });
-    this.store.dispatch(new Training.StopTraining());
-  }
-
-  getRunningExercise() {
-    return { ...this.runningExercise };
+    this.store
+      .select(fromTraining.getActiveTraining)
+      .pipe(take(1))
+      .subscribe(ex => {
+        this.addDataToDB({
+          ...ex,
+          duration: ex.duration * (progress / 100000),
+          calories: ex.calories * (progress / 100),
+          date: new Date(),
+          state: 'canceled',
+        });
+        this.store.dispatch(new Training.StopTraining());
+      });
   }
 
   cancelSubs() {

@@ -7,6 +7,7 @@ import { Exercise } from '../exercise.model';
 import { TrainingService } from './../training.service';
 import { UIService } from 'src/app/shared/ui.service';
 import * as fromRoot from '../../app.reducer';
+import * as fromTraining from '../training.reducer';
 
 @Component({
   selector: 'app-new-training',
@@ -19,7 +20,9 @@ import * as fromRoot from '../../app.reducer';
           </mat-card-title>
 
           <mat-card-content fxLayoutAlign="center">
-            <mat-form-field *ngIf="!(isLoading$ | async) && exercises">
+            <mat-form-field
+              *ngIf="(!(isLoading$ | async) && exercises$ | async)"
+            >
               <mat-select
                 placeholder="Select an Exercise..."
                 ngModel
@@ -27,7 +30,7 @@ import * as fromRoot from '../../app.reducer';
                 required
               >
                 <mat-option
-                  *ngFor="let exercise of exercises"
+                  *ngFor="let exercise of (exercises$ | async)"
                   [value]="exercise.id"
                 >
                   {{ exercise.name }}
@@ -45,13 +48,13 @@ import * as fromRoot from '../../app.reducer';
               mat-button
               [disabled]="f.invalid"
               color="primary"
-              *ngIf="exercises"
+              *ngIf="(exercises$ | async)"
             >
               Start
             </button>
             <button
               mat-button
-              *ngIf="!exercises"
+              *ngIf="!(exercises$ | async)"
               type="button"
               (click)="fetchExercises()"
               color="warn"
@@ -65,8 +68,8 @@ import * as fromRoot from '../../app.reducer';
   `,
   styleUrls: ['./new-training.component.scss'],
 })
-export class NewTrainingComponent implements OnInit, OnDestroy {
-  exercises: Exercise[];
+export class NewTrainingComponent implements OnInit {
+  exercises$: Observable<Exercise[]>;
   private exerciseSubscription: Subscription;
   private loadingSubscription: Subscription;
 
@@ -75,17 +78,12 @@ export class NewTrainingComponent implements OnInit, OnDestroy {
   constructor(
     private trainingService: TrainingService,
     private uiService: UIService,
-    private store: Store<fromRoot.State>
+    private store: Store<fromTraining.State>
   ) {}
 
   ngOnInit() {
     this.isLoading$ = this.store.select(fromRoot.getIsLoading);
-    this.exerciseSubscription = this.trainingService.exercisesChanged.subscribe(
-      exercises => {
-        this.exercises = exercises;
-      }
-    );
-
+    this.exercises$ = this.store.select(fromTraining.getAvailableExercises);
     this.fetchExercises();
   }
 
@@ -95,11 +93,5 @@ export class NewTrainingComponent implements OnInit, OnDestroy {
 
   onStartTraining(form: NgForm) {
     this.trainingService.startExercise(form.value.exercise);
-  }
-
-  ngOnDestroy() {
-    if (this.exerciseSubscription) {
-      this.exerciseSubscription.unsubscribe();
-    }
   }
 }
