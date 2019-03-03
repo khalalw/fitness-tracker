@@ -6,7 +6,8 @@ import { Injectable } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { UIService } from '../shared/ui.service';
 import * as UI from '../shared/ui.actions';
-import * as fromRoot from '../app.reducer';
+import * as fromTraining from './training.reducer';
+import * as Training from './training.actions';
 import { Store } from '@ngrx/store';
 
 @Injectable()
@@ -22,7 +23,7 @@ export class TrainingService {
   constructor(
     private db: AngularFirestore,
     private uiService: UIService,
-    private store: Store<fromRoot.State>
+    private store: Store<fromTraining.State>
   ) {}
 
   fetchAvailableExercises() {
@@ -47,8 +48,7 @@ export class TrainingService {
         .subscribe(
           (exercises: Exercise[]) => {
             this.store.dispatch(new UI.StopLoading());
-            this.availableExercises = exercises;
-            this.exercisesChanged.next([...this.availableExercises]);
+            this.store.dispatch(new Training.SetAvailableExercises(exercises));
           },
           err => {
             this.store.dispatch(new UI.StopLoading());
@@ -69,16 +69,13 @@ export class TrainingService {
         .collection('pastExercises')
         .valueChanges()
         .subscribe((exercises: Exercise[]) => {
-          this.pastExercisesChanged.next(exercises);
+          this.store.dispatch(new Training.SetFinishedExercises(exercises));
         })
     );
   }
 
   startExercise(selectedId: string) {
-    this.runningExercise = this.availableExercises.find(
-      ex => ex.id === selectedId
-    );
-    this.exerciseChanged.next({ ...this.runningExercise });
+    this.store.dispatch(new Training.StartTraining(selectedId));
   }
 
   completeExercise() {
@@ -88,8 +85,7 @@ export class TrainingService {
       date: new Date(),
       state: 'completed',
     });
-    this.runningExercise = null;
-    this.exerciseChanged.next(null);
+    this.store.dispatch(new Training.StopTraining());
   }
 
   cancelExercise(progress: number) {
@@ -100,8 +96,7 @@ export class TrainingService {
       date: new Date(),
       state: 'canceled',
     });
-    this.runningExercise = null;
-    this.exerciseChanged.next(null);
+    this.store.dispatch(new Training.StopTraining());
   }
 
   getRunningExercise() {
