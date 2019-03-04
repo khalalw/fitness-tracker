@@ -1,3 +1,4 @@
+import { AuthService } from './../../auth/auth.service';
 import { Store } from '@ngrx/store';
 import { NgForm } from '@angular/forms';
 import { Component, OnInit } from '@angular/core';
@@ -73,7 +74,8 @@ export class NewTrainingComponent implements OnInit {
 
   constructor(
     private trainingService: TrainingService,
-    private store: Store<fromTraining.State>
+    private store: Store<fromTraining.State>,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {

@@ -1,3 +1,4 @@
+import { AuthService } from './../../auth/auth.service';
 import { Store } from '@ngrx/store';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
@@ -31,7 +32,8 @@ export class CurrentTrainingComponent implements OnInit {
   constructor(
     private dialog: MatDialog,
     private trainingService: TrainingService,
-    private store: Store<fromTraining.State>
+    private store: Store<fromTraining.State>,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
@@ -47,7 +49,7 @@ export class CurrentTrainingComponent implements OnInit {
         this.timer = setInterval(() => {
           this.progress = this.progress + 1;
           if (this.progress >= 100) {
-            this.trainingService.completeExercise();
+            this.trainingService.completeExercise(this.authService.getUserId());
             clearInterval(this.timer);
           }
         }, step);
@@ -63,7 +65,10 @@ export class CurrentTrainingComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.trainingService.cancelExercise(this.progress);
+        this.trainingService.cancelExercise(
+          this.progress,
+          this.authService.getUserId()
+        );
       } else {
         this.startTimer();
       }

@@ -1,4 +1,3 @@
-import { Subject } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/auth';
@@ -63,6 +62,10 @@ export class AuthService {
         this.store.dispatch(new UI.StopLoading());
         this.uiService.openSnackBar(err.message, null, 3000);
       });
+  }
+
+  getUserId() {
+    return this.afAuth.auth.currentUser.uid;
   }
 
   logout() {

@@ -1,3 +1,4 @@
+import { AuthService } from './../../auth/auth.service';
 import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { TrainingService } from '../training.service';
 import { Exercise } from '../exercise.model';
@@ -74,7 +75,8 @@ export class PastTrainingComponent implements OnInit, AfterViewInit {
 
   constructor(
     private trainingService: TrainingService,
-    private store: Store<fromTraining.State>
+    private store: Store<fromTraining.State>,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
@@ -83,7 +85,7 @@ export class PastTrainingComponent implements OnInit, AfterViewInit {
       .subscribe((exercises: Exercise[]) => {
         this.dataSource.data = exercises;
       });
-    this.trainingService.fetchPastExercises();
+    this.trainingService.fetchPastExercises(this.authService.getUserId());
   }
 
   ngAfterViewInit() {

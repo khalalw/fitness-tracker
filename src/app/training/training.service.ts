@@ -63,10 +63,10 @@ export class TrainingService {
     );
   }
 
-  fetchPastExercises() {
+  fetchPastExercises(userId) {
     this.fbSubs.push(
       this.db
-        .collection('pastExercises')
+        .collection(`users/${userId}/pastExercises`)
         .valueChanges()
         .subscribe((exercises: Exercise[]) => {
           this.store.dispatch(new Training.SetFinishedExercises(exercises));
@@ -78,33 +78,39 @@ export class TrainingService {
     this.store.dispatch(new Training.StartTraining(selectedId));
   }
 
-  completeExercise() {
+  completeExercise(userId) {
     this.store
       .select(fromTraining.getActiveTraining)
       .pipe(take(1))
       .subscribe(ex => {
-        this.addDataToDB({
-          ...ex,
-          duration: ex.duration / 1000,
-          date: new Date(),
-          state: 'completed',
-        });
+        this.addDataToDB(
+          {
+            ...ex,
+            duration: ex.duration / 1000,
+            date: new Date(),
+            state: 'completed',
+          },
+          userId
+        );
         this.store.dispatch(new Training.StopTraining());
       });
   }
 
-  cancelExercise(progress: number) {
+  cancelExercise(progress: number, userId) {
     this.store
       .select(fromTraining.getActiveTraining)
       .pipe(take(1))
       .subscribe(ex => {
-        this.addDataToDB({
-          ...ex,
-          duration: ex.duration * (progress / 100000),
-          calories: ex.calories * (progress / 100),
-          date: new Date(),
-          state: 'canceled',
-        });
+        this.addDataToDB(
+          {
+            ...ex,
+            duration: ex.duration * (progress / 100000),
+            calories: ex.calories * (progress / 100),
+            date: new Date(),
+            state: 'canceled',
+          },
+          userId
+        );
         this.store.dispatch(new Training.StopTraining());
       });
   }
@@ -115,7 +121,8 @@ export class TrainingService {
     });
   }
 
-  private addDataToDB(exercise: Exercise) {
-    this.db.collection('pastExercises').add(exercise);
+  private addDataToDB(exercise: Exercise, userId) {
+    // this.db.collection('pastExercises').add(exercise);
+    this.db.collection(`users/${userId}/pastExercises`).add(exercise);
   }
 }
