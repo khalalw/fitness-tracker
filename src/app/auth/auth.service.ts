@@ -27,7 +27,7 @@ export class AuthService {
         this.router.navigate(['/training']);
       } else {
         this.store.dispatch(new Auth.SetUnauthenticated());
-        this.router.navigate(['/login']);
+        this.router.navigate(['']);
         this.trainingService.cancelSubs();
       }
     });
@@ -70,5 +70,6 @@ export class AuthService {
 
   logout() {
     this.afAuth.auth.signOut();
+    this.uiService.openSnackBar('You have successfully logged out', null, 3000);
   }
 }
