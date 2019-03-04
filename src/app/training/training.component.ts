@@ -1,6 +1,5 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Subscription, Observable } from 'rxjs';
-import { TrainingService } from './training.service';
+import { Component, OnInit } from '@angular/core';
+import { Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
 import * as fromTraining from './training.reducer';
 
@@ -24,10 +23,7 @@ import * as fromTraining from './training.reducer';
 export class TrainingComponent implements OnInit {
   isTrainingOngoing$: Observable<boolean>;
 
-  constructor(
-    private trainingService: TrainingService,
-    private store: Store<fromTraining.State>
-  ) {}
+  constructor(private store: Store<fromTraining.State>) {}
 
   ngOnInit() {
     this.isTrainingOngoing$ = this.store.select(

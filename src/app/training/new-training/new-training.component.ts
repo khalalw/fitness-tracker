@@ -1,11 +1,10 @@
 import { Store } from '@ngrx/store';
 import { NgForm } from '@angular/forms';
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Subscription, Observable } from 'rxjs';
+import { Component, OnInit } from '@angular/core';
+import { Observable } from 'rxjs';
 
 import { Exercise } from '../exercise.model';
 import { TrainingService } from './../training.service';
-import { UIService } from 'src/app/shared/ui.service';
 import * as fromRoot from '../../app.reducer';
 import * as fromTraining from '../training.reducer';
 
@@ -70,14 +69,10 @@ import * as fromTraining from '../training.reducer';
 })
 export class NewTrainingComponent implements OnInit {
   exercises$: Observable<Exercise[]>;
-  private exerciseSubscription: Subscription;
-  private loadingSubscription: Subscription;
-
   isLoading$: Observable<boolean>;
 
   constructor(
     private trainingService: TrainingService,
-    private uiService: UIService,
     private store: Store<fromTraining.State>
   ) {}
 
